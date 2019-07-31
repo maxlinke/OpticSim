@@ -1,4 +1,7 @@
-﻿namespace Geometry {
+﻿using UnityEngine;
+using System.Collections.Generic;
+
+namespace Geometry {
     
     public struct Circle {
 
@@ -19,6 +22,18 @@
             this.radius = radius;
         }
 
+        //also returns true when tangential...
+        public bool Intersects (Line other, out List<Point> intersections) {
+            intersections = IntersectTools.LineCircleIntersect(other, this);
+            return intersections.Count > 0;
+        }
+
+        //also returns true when tangential...
+        public bool Intersects (Circle other, out List<Point> intersections) {
+            intersections = IntersectTools.CircleCircleIntersect(other, this);
+            return intersections.Count > 0;
+        }
+
         public override int GetHashCode () {
             return x.GetHashCode() + y.GetHashCode() + radius.GetHashCode();
         }
@@ -27,8 +42,10 @@
             if(!(obj is Circle)){
                 return false;
             }
-            var otherCircle = (Circle)obj;
-            return this.x.Equals(otherCircle.x) && this.y.Equals(otherCircle.y) && this.radius.Equals(otherCircle.radius);
+            var other = (Circle)obj;
+            return 
+                this.center.Equals(other.center) &&
+                Mathf.Abs(this.radius - other.radius) <= Geometry.EPSILON;
         }
 
         public override string ToString () {

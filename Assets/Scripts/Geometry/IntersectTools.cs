@@ -5,8 +5,21 @@ namespace Geometry {
     
     public static class IntersectTools {
 
-        public static List<Point> LineLineIntersect (Line lineA, Line lineB) {
-            return null;
+        public static bool LineLineIntersect (Line lineA, Line lineB, out Point intersectPoint) {
+            if(lineA.a == 0){
+                return LineLineIntersect(lineB, lineA, out intersectPoint);     //because the f(y) can return NaN if lineA is vertical...
+            }
+            var output = new List<Point>();
+            float yQuotient = lineA.a * lineB.b - lineB.a * lineA.b;
+            if(yQuotient == 0){
+                intersectPoint = new Point(float.NaN, float.NaN);
+                return false;
+            }
+            float yNumerator = lineB.a * lineA.c - lineA.a * lineB.c;
+            float y = yNumerator / yQuotient;
+            float x = lineA.fY(y);
+            intersectPoint = new Point(x, y);
+            return true;
         }
 
         public static List<Point> CircleCircleIntersect (Circle circleA, Circle circleB) {
@@ -20,7 +33,6 @@ namespace Geometry {
             float lineYMul = -2f * (yB - yA);
             float lineConst = (xB * xB) - (xA * xA) + (yB * yB) - (yA * yA) - (rB * rB) + (rA * rA);
             Line intersectLine = new Line(lineXMul, lineYMul, lineConst);
-            Debug.Log(intersectLine);
             return LineCircleIntersect(intersectLine, circleA);
         }
 
@@ -74,11 +86,13 @@ namespace Geometry {
                 }
             }
             var output = new List<Point>();
+            //revert transformation into local space of circle
             foreach(var intersect in localIntersects){
                 output.Add((Vector2)intersect + circle.center);
             }
             return output;
 
+            //since regular sign function returns 0 at input 0
             float sgn (float inputValue) {
                 return (inputValue < 0 ? -1 : 1);
             }

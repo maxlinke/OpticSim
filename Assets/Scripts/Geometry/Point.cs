@@ -20,6 +20,9 @@ namespace Geometry {
         public static implicit operator Vector2(Point p) => p.ToVector2();
         public static implicit operator Point(Vector2 v) => new Point(v);
 
+        public static bool operator ==(Point p1, Point p2) => p1.Equals(p2);
+        public static bool operator !=(Point p1, Point p2) => !(p1.Equals(p2));
+
         public Vector2 ToVector2 () {
             return new Vector2(x, y);
         }
@@ -32,8 +35,10 @@ namespace Geometry {
             if(!(obj is Point)){
                 return false;
             }
-            var otherPoint = (Point)obj;
-            return otherPoint.x.Equals(this.x) && otherPoint.y.Equals(this.y);
+            var other = (Point)obj;
+            return 
+                Mathf.Abs(other.x - this.x) <= Geometry.EPSILON && 
+                Mathf.Abs(other.y - this.y) <= Geometry.EPSILON;
         }
 
         public override string ToString () {
