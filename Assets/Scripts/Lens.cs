@@ -11,13 +11,16 @@ public class Lens {
 
     float r1, r2, n, d, r;
 
-    public Lens (float frontRadius, float rearRadius, float refractiveIndex, float thickness, float lensRadius) {
-        this.r1 = frontRadius;
-        this.r2 = rearRadius;
-        this.d = Mathf.Max(MIN_THICKNESS, thickness);
-        this.n = refractiveIndex;
+    public Lens (LensCreationParameters parameters) {
+        var fSurf = parameters.frontSurface;
+        var rSurf = parameters.rearSurface;
+        this.r1 = Mathf.Abs(fSurf.radius) * (fSurf.type.Equals(LensSurface.Type.CONCAVE) ? -1 : 1);
+        this.r2 = Mathf.Abs(rSurf.radius) * (rSurf.type.Equals(LensSurface.Type.CONCAVE) ? 1 : -1);
+        this.d = Mathf.Max(MIN_THICKNESS, parameters.thickness);
+        this.n = parameters.refractiveIndex;
+        this.r = parameters.desiredRadius;
         if(TryGetIntersectPoint(r1, r1, d, out float iX, out float iY)){        //TODO instead of r1, r2 and inferring stuff from there use a sphere/circle struct so i don't have to recalculate centers and offsets in multiple places...
-            lensRadius = Mathf.Min(Mathf.Abs(iY), lensRadius);
+            r = Mathf.Min(Mathf.Abs(iY), r);
         }
     }
 
