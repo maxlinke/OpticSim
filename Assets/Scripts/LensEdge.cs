@@ -6,14 +6,14 @@ public class LensEdge {
 
     public enum Type {
         LINE, 
-        CIRCLE
+        ARC
     }
 
     public class Hit {
 
-        public Vector2 point { get; private set; }
-        public Vector2 normal { get; private set; }
-        public float angle { get; private set; }
+        public readonly Vector2 point;
+        public readonly Vector2 normal;
+        public readonly float angle;
 
         private Hit (Vector2 point, Vector2 normal, float angle) {
             this.point = point;
@@ -24,13 +24,14 @@ public class LensEdge {
     }
 
     public Type type { get; private set; }
-
+    //all you ever need for line "collision" detection
     private Vector2 linePoint1;
     private Vector2 linePoint2;
-
-    private Vector2 circleCenter;
-    private float circleRadius;
-    //TODO a range of x-values (technically i only need one, but it can either be a min or max...)
+    //all this however is for the arc "collision" detection. it's not generalized, only for the stuff i do here...
+    private Vector2 arcCenter;
+    private float arcRadius;
+    private Range xBounds;
+    private Range yBounds;
 
     private LensEdge () {}
 
@@ -39,7 +40,7 @@ public class LensEdge {
             case Type.LINE:
                 hit = null;
                 return false;
-            case Type.CIRCLE:
+            case Type.ARC:
                 hit = null;
                 return false;
             default:
@@ -57,11 +58,11 @@ public class LensEdge {
         return output;
     }
 
-    public static LensEdge GetCircleEdge (Vector2 center, float radius) {
+    public static LensEdge GetArcEdge (Vector2 center, float radius) {
         var output = new LensEdge();
-        output.type = LensEdge.Type.CIRCLE;
-        output.circleCenter = center;
-        output.circleRadius = radius;
+        output.type = LensEdge.Type.ARC;
+        output.arcCenter = center;
+        output.arcRadius = radius;
         return output;
     }
 	

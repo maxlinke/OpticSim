@@ -48,6 +48,20 @@ namespace Geometry {
             return -((b * y) + c) / a;
         }
 
+        public (Point p1, Point p2) GetTwoPoints () {
+            if(b == 0){
+                return (
+                    p1: new Point(fY(-1), -1),
+                    p2: new Point(fY(1), 1)
+                );
+            }else{
+                return (
+                    p1: new Point(-1, fX(-1)), 
+                    p2: new Point(1, fX(1))
+                );
+            }
+        }
+
         public bool Intersects (Line other, out Point intersectPoint) {
             return IntersectTools.LineLineIntersect(this, other, out intersectPoint);
         }
